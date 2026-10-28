@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Investimenti">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Investimenti — Dashboard</title>
+<style>
+:root{--bg:#0b1120;--panel:#121b2d;--panel2:#172338;--line:#29364c;--text:#eef3fb;--muted:#98a8bf;--accent:#86b7ff;--green:#65d6a2;--red:#ff8d94;--gold:#e7c778;--radius:18px}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#101a2b 0,#0b1120 360px);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 14px;background:var(--accent);color:#071323;font-weight:700}button.secondary{background:#26364f;color:var(--text);border:1px solid #3a4a63}button.danger{background:#482632;color:#ffdbe0;border:1px solid #78404b}button.small{padding:7px 10px;font-size:12px}
+header{max-width:1100px;margin:auto;padding:24px 18px 12px;display:flex;justify-content:space-between;gap:16px;align-items:center}h1{font-size:25px;letter-spacing:-.6px;margin:0}h2{font-size:18px;margin:0 0 15px}h3{font-size:14px;margin:0 0 10px}.sub{color:var(--muted);font-size:13px;margin-top:5px}.wrap{max-width:1100px;margin:auto;padding:10px 18px 100px}.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tabs{display:flex;gap:7px;overflow:auto;padding:8px 0 15px;position:sticky;top:0;background:rgba(11,17,32,.94);backdrop-filter:blur(14px);z-index:4}
+.tab{white-space:nowrap;background:transparent;border:1px solid var(--line);color:var(--muted);padding:10px 13px}.tab.active{background:#243955;color:#fff;border-color:#47658b}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.two{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-top:14px}.card{background:linear-gradient(145deg,rgba(23,35,56,.98),rgba(17,27,44,.98));border:1px solid var(--line);border-radius:var(--radius);padding:17px;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.12)}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:24px;font-weight:750;letter-spacing:-.6px;margin:7px 0 4px;overflow-wrap:anywhere}.positive{color:var(--green)}.negative{color:var(--red)}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section{display:none}.section.active{display:block}.bar{height:9px;border-radius:10px;background:#27364d;overflow:hidden;display:flex}.bar span{display:block;height:100%}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
+table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}th,td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}td.num,th.num{text-align:right;white-space:nowrap}.table-wrap{overflow-x:auto}td:first-child{min-width:125px}.ticker{font-weight:750}.asset-name{font-size:11px;color:var(--muted);margin-top:3px}.pill{font-size:11px;border:1px solid var(--line);border-radius:20px;padding:4px 7px;color:var(--muted);white-space:nowrap}
+form .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}input,select{width:100%;background:#0c1525;border:1px solid #35455e;border-radius:10px;padding:11px;color:var(--text);min-width:0}input:focus,select:focus{outline:2px solid #4f80bb;border-color:transparent}.field.full{grid-column:1/-1}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.form-card{margin-top:12px}.notice{background:#202b3e;border:1px solid #35445c;padding:12px 13px;border-radius:12px;font-size:12px;line-height:1.5;color:#c2cede}.empty{padding:28px;text-align:center;color:var(--muted)}.progress{height:10px;background:#26354b;border-radius:20px;overflow:hidden}.progress>div{height:100%;background:var(--green);border-radius:20px}.result-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.result-row:last-child{border-bottom:0}.hidden{display:none!important}
+footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
+@media(max-width:760px){header{align-items:flex-start;flex-direction:column;padding-top:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{font-size:21px}.two{grid-template-columns:1fr}.wrap{padding-left:12px;padding-right:12px}.card{padding:14px}.top-actions{width:100%}.top-actions button{flex:1}th,td{padding:10px 7px}.desktop-only{display:none}}
+@media(min-width:761px){.mobile-only{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Investimenti</h1><div class="sub">Dashboard personale · dati aggiornati manualmente</div></div>
+  <div class="top-actions"><button class="secondary" id="exportBtn">Esporta backup</button><button class="secondary" id="importBtn">Importa backup</button><input id="importFile" type="file" accept="application/json" class="hidden"></div>
+</header>
+<main class="wrap">
+<nav class="tabs" aria-label="Sezioni">
+<button class="tab active" data-tab="dashboard">Panoramica</button><button class="tab" data-tab="portfolio">Portafoglio</button><button class="tab" data-tab="pac">PAC</button><button class="tab" data-tab="rebalance">Ribilanciamento</button><button class="tab" data-tab="fire">Simulatore FIRE</button><button class="tab" data-tab="settings">Impostazioni</button>
+</nav>
+<section id="dashboard" class="section active">
+  <div class="grid">
+    <div class="card"><div class="metric-label">Patrimonio investito</div><div class="metric" id="totalValue">€ 0</div><div class="tiny" id="assetsCount">0 strumenti</div></div>
+    <div class="card"><div class="metric-label">Costo di carico</div><div class="metric" id="totalCost">€ 0</div><div class="tiny">Sulla base dei prezzi medi inseriti</div></div>
+    <div class="card"><div class="metric-label">Plus/minus latente</div><div class="metric" id="totalGain">€ 0</div><div class="tiny" id="totalGainPct">0,00%</div></div>
+    <div class="card"><div class="metric-label">PAC mensile previsto</div><div class="metric" id="monthlyPac">€ 0</div><div class="tiny">Somma dei piani attivi</div></div>
+  </div>
+  <div class="two">
+    <div class="card"><h2>Allocazione attuale</h2><div class="bar" id="allocationBar"></div><div class="legend" id="allocationLegend"></div><div class="tiny" style="margin-top:14px">L'allocazione considera il valore di mercato degli strumenti con quantità e prezzo validi.</div></div>
+    <div class="card"><h2>Da fare</h2><div class="result-row"><span class="muted">Prezzi da aggiornare</span><strong id="staleCount">—</strong></div><div class="result-row"><span class="muted">Strumenti in portafoglio</span><strong id="heldCount">—</strong></div><div class="result-row"><span class="muted">Prossimo passo</span><span class="tiny">Aggiorna i prezzi nella scheda Portafoglio</span></div><button class="secondary" style="width:100%;margin-top:12px" onclick="showTab('portfolio')">Apri portafoglio</button></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Valore per categoria</h2><div id="categorySummary"></div></div>
+  <div class="notice" style="margin-top:14px">I valori sono calcolati solo dai dati inseriti da te. L'app non è collegata a Fineco e non scarica automaticamente quotazioni di mercato. Fai regolarmente un backup con “Esporta backup”.</div>
+</section>
+<section id="portfolio" class="section">
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin-bottom:4px">I tuoi strumenti</h2><div class="tiny">Modifica quantità, prezzo medio, prezzo attuale e peso obiettivo.</div></div><button id="addAssetBtn">+ Aggiungi strumento</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Strumento</th><th>Categoria</th><th class="num">Quantità</th><th class="num">Prezzo</th><th class="num">Valore</th><th class="num">P/L</th><th></th></tr></thead><tbody id="assetRows"></tbody></table></div><div id="portfolioEmpty" class="empty hidden">Nessuno strumento inserito. Aggiungine uno per iniziare.</div></div>
+  <div id="assetFormCard" class="card form-card hidden"><h2 id="assetFormTitle">Aggiungi strumento</h2><form id="assetForm"><input type="hidden" id="assetId">
+  <div class="fields">
+  <div><label for="assetTicker">Ticker / ISIN breve</label><input id="assetTicker" required placeholder="es. SWDA"></div>
+  <div><label for="assetName">Nome</label><input id="assetName" required placeholder="es. MSCI World"></div>
+  <div><label for="assetCategory">Categoria</label><select id="assetCategory"><option>Azionario globale</option><option>Azionario emergenti</option><option>Azionario small cap</option><option>Obbligazionario breve</option><option>Obbligazionario governativo</option><option>Obbligazionario lunga durata</option><option>Oro</option><option>Bitcoin</option><option>Liquidità</option><option>Altro</option></select></div>
+  <div><label for="assetCurrency">Valuta</label><select id="assetCurrency"><option value="EUR">EUR</option><option value="USD">USD</option></select></div>
+  <div><label for="assetQty">Quantità posseduta</label><input id="assetQty" type="number" min="0" step="0.000001" value="0" required></div>
+  <div><label for="assetAvg">Prezzo medio di carico (€)</label><input id="assetAvg" type="number" min="0" step="0.0001" value="0" required></div>
+  <div><label for="assetPrice">Prezzo attuale (€)</label><input id="assetPrice" type="number" min="0" step="0.0001" value="0" required></div>
+  <div><label for="assetTarget">Peso obiettivo (%)</label><input id="assetTarget" type="number" min="0" max="100" step="0.1" value="0" required></div>
+  </div><div class="form-actions"><button type="submit">Salva strumento</button><button type="button" class="secondary" id="cancelAsset">Annulla</button></div></form></div>
+  <div class="card form-card"><h2>Strumenti rapidi</h2><div class="tiny" style="margin-bottom:12px">Aggiungi una base modificabile con i ticker che usi. Quantità e prezzi partono da zero.</div><div class="form-actions" id="quickAdd"></div></div>
+</section>
+<section id="pac" class="section">
+  <div class="grid">
+    <div class="card"><div class="metric-label">Totale PAC mensile</div><div class="metric" id="pacTotal">€ 0</div><div class="tiny">Piani attivi</div></div>
+    <div class="card"><div class="metric-label">Versamento annuo</div><div class="metric" id="pacAnnual">€ 0</div><div class="tiny">Senza rivalutazione</div></div>
+    <div class="card"><div class="metric-label">Strumenti in PAC</div><div class="metric" id="pacCount">0</div><div class="tiny">Righe attive</div></div>
+    <div class="card"><div class="metric-label">Budget disponibile</div><div class="metric" id="pacBudgetMetric">€ 500</div><div class="tiny">Budget mensile impostato</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin-bottom:4px">Piano di accumulo</h2><div class="tiny">Puoi pianificare quote oppure importi mensili indicativi per strumento.</div></div><button id="addPacBtn">+ Riga PAC</button></div><div class="table-wrap"><table><thead><tr><th>Strumento</th><th>Tipo</th><th class="num">Quantità/mese</th><th class="num">Importo/mese</th><th>Stato</th><th></th></tr></thead><tbody id="pacRows"></tbody></table></div><div id="pacEmpty" class="empty hidden">Nessuna riga PAC. Aggiungi una riga per iniziare.</div></div>
+  <div id="pacFormCard" class="card form-card hidden"><h2 id="pacFormTitle">Aggiungi riga PAC</h2><form id="pacForm"><input id="pacId" type="hidden"><div class="fields"><div><label for="pacAsset">Strumento</label><select id="pacAsset" required></select></div><div><label for="pacType">Modalità</label><select id="pacType"><option value="units">Quote mensili</option><option value="amount">Importo mensile (€)</option></select></div><div><label for="pacUnits">Quote al mese</label><input id="pacUnits" type="number" min="0" step="0.001" value="1"></div><div><label for="pacAmount">Importo al mese (€)</label><input id="pacAmount" type="number" min="0" step="1" value="0"></div><div><label for="pacActive">Stato</label><select id="pacActive"><option value="true">Attivo</option><option value="false">In pausa</option></select></div></div><div class="form-actions"><button type="submit">Salva riga</button><button type="button" class="secondary" id="cancelPac">Annulla</button></div></form></div>
+  <div class="card form-card"><h2>Budget PAC</h2><div class="fields"><div><label for="pacBudget">Budget mensile massimo (€)</label><input id="pacBudget" type="number" min="0" step="10" value="500"></div></div><div class="form-actions"><button id="savePacBudget">Salva budget</button></div><div id="pacBudgetStatus" class="tiny" style="margin-top:10px"></div></div>
+</section>
+<section id="rebalance" class="section">
+  <div class="card"><h2>Ribilanciamento per acquisti futuri</h2><p class="tiny">Calcolo indicativo degli scostamenti tra peso attuale e peso obiettivo. Le indicazioni privilegiano gli strumenti sotto target; non vendono né impartiscono ordini.</p><div id="targetWarning" class="notice"></div><div class="table-wrap"><table><thead><tr><th>Strumento</th><th class="num">Peso attuale</th><th class="num">Target</th><th class="num">Scostamento</th><th class="num">Differenza €</th><th>Indicazione</th></tr></thead><tbody id="rebalanceRows"></tbody></table></div></div>
+  <div class="card" style="margin-top:14px"><h2>Simulazione del prossimo versamento</h2><div class="fields"><div><label for="rebalanceBudget">Importo da investire (€)</label><input id="rebalanceBudget" type="number" min="0" step="10" value="500"></div></div><div id="rebalancePlan" style="margin-top:12px"></div><div class="form-actions"><button id="recalcRebalance">Ricalcola</button></div></div>
+</section>
+<section id="fire" class="section">
+  <div class="card"><h2>Simulatore FIRE</h2><p class="tiny">Proiezione deterministica, non una previsione garantita. I rendimenti sono ipotesi nominali; il risultato viene riportato anche in euro di oggi.</p>
+  <div class="fields">
+  <div><label for="fireAge">Età attuale</label><input id="fireAge" type="number" min="18" max="100" value="30"></div>
+  <div><label for="fireTargetAge">Età obiettivo FIRE</label><input id="fireTargetAge" type="number" min="19" max="100" value="55"></div>
+  <div><label for="fireCapital">Capitale investito iniziale (€)</label><input id="fireCapital" type="number" min="0" step="100" value="0"></div>
+  <div><label for="fireMonthly">PAC mensile (€)</label><input id="fireMonthly" type="number" min="0" step="25" value="500"></div>
+  <div><label for="fireReturn">Rendimento annuo nominale (%)</label><input id="fireReturn" type="number" min="-20" max="30" step="0.5" value="5"></div>
+  <div><label for="fireInflation">Inflazione annua (%)</label><input id="fireInflation" type="number" min="0" max="20" step="0.5" value="2"></div>
+  <div><label for="fireSpend">Spesa desiderata mensile in euro di oggi (€)</label><input id="fireSpend" type="number" min="0" step="100" value="2000"></div>
+  <div><label for="fireWithdrawal">Tasso di prelievo annuo (%)</label><input id="fireWithdrawal" type="number" min="1" max="10" step="0.25" value="3.5"></div>
+  </div><div class="form-actions"><button id="calcFire">Calcola proiezione</button></div></div>
+  <div class="grid" style="margin-top:14px">
+    <div class="card"><div class="metric-label">Capitale stimato all'obiettivo</div><div class="metric" id="fireFuture">—</div><div class="tiny" id="fireToday">In euro di oggi: —</div></div>
+    <div class="card"><div class="metric-label">Capitale FIRE necessario</div><div class="metric" id="fireNeeded">—</div><div class="tiny">Spesa annua / tasso di prelievo</div></div>
+    <div class="card"><div class="metric-label">Copertura dell'obiettivo</div><div class="metric" id="fireCoverage">—</div><div class="progress" style="margin-top:10px"><div id="fireProgress" style="width:0%"></div></div></div>
+    <div class="card"><div class="metric-label">Rendita mensile teorica</div><div class="metric" id="fireIncome">—</div><div class="tiny">Valore nominale all'età obiettivo</div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Capitale anno per anno</h2><div class="table-wrap"><table><thead><tr><th>Età</th><th class="num">Capitale nominale</th><th class="num">Capitale in euro di oggi</th></tr></thead><tbody id="fireRows"></tbody></table></div></div>
+  <div class="notice" style="margin-top:14px">La simulazione non considera fiscalità, commissioni, costi dei fondi, volatilità, sequence-of-returns risk, pensione pubblica o variazioni future dei versamenti. Il tasso di prelievo è un'ipotesi, non una garanzia di sostenibilità.</div>
+</section>
+<section id="settings" class="section">
+  <div class="card"><h2>Impostazioni e dati</h2><p class="tiny">I dati sono conservati nel browser di questo dispositivo. Non vengono inviati a un server. Cancellare i dati del sito o cambiare browser può eliminarli.</p>
+  <div class="fields"><div><label for="targetTotal">Target complessivo pesi strumenti (%)</label><input id="targetTotal" type="number" min="1" max="1000" step="1" value="100"></div><div><label for="currencyDisplay">Valuta di visualizzazione</label><select id="currencyDisplay"><option value="EUR">Euro (€)</option></select></div></div>
+  <div class="form-actions"><button id="saveSettings">Salva impostazioni</button><button class="secondary" id="downloadCsv">Esporta portafoglio CSV</button><button class="danger" id="resetApp">Azzera tutti i dati</button></div><div class="notice" style="margin-top:14px">Consiglio: esporta periodicamente un backup JSON e conservalo in un luogo sicuro. Non contiene password bancarie, ma può contenere informazioni finanziarie personali.</div></div>
+</section>
+<footer>Investimenti PWA · versione 1.0 · calcoli informativi, non consulenza finanziaria</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const euro=n=>new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
+const num=(n,d=2)=>new Intl.NumberFormat('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number.isFinite(n)?n:0);
+const uid=()=>Math.random().toString(36).slice(2,10);
+const CATS=['Azionario globale','Azionario emergenti','Azionario small cap','Obbligazionario breve','Obbligazionario governativo','Obbligazionario lunga durata','Oro','Bitcoin','Liquidità','Altro'];
+const COLORS={'Azionario globale':'#6da4ff','Azionario emergenti':'#6dd6c0','Azionario small cap':'#9c8aff','Obbligazionario breve':'#e8c66f','Obbligazionario governativo':'#f1a86d','Obbligazionario lunga durata':'#e88d9b','Oro':'#e7c778','Bitcoin':'#b99cff','Liquidità':'#a6b6ca','Altro':'#8998ad'};
+const QUICK=[
+ ['SWDA','iShares Core MSCI World','Azionario globale'],['EIMI','iShares Core MSCI EM IMI','Azionario emergenti'],['AVWS','Avantis Global Small Cap Value','Azionario small cap'],
+ ['AGGH','Global Aggregate Bond EUR Hedged','Obbligazionario breve'],['EGOV','Government Bond ETF (EGOV)','Obbligazionario governativo'],['EMI15.MI','ETF obbligazionario lunga durata','Obbligazionario lunga durata'],
+ ['XGDU','Oro fisico ETC','Oro'],['WBIT','Bitcoin ETP','Bitcoin'],['SMEA','MSCI Europe','Azionario globale'],['BTP','BTP / obbligazione singola','Obbligazionario governativo']
+];
+const defaultState={assets:[],pacs:[],settings:{pacBudget:500,targetTotal:100},fire:{age:30,targetAge:55,capital:0,monthly:500,ret:5,infl:2,spend:2000,withdraw:3.5}};
+let state=loadState();
+function loadState(){try{const x=JSON.parse(localStorage.getItem('investimentiPWA'));if(x&&Array.isArray(x.assets))return {...defaultState,...x,settings:{...defaultState.settings,...x.settings},fire:{...defaultState.fire,...x.fire}}}catch(e){}return structuredClone(defaultState)}
+function save(){localStorage.setItem('investimentiPWA',JSON.stringify(state));render()}
+function money(v){return euro(v)}
+function heldAssets(){return state.assets.filter(a=>Number(a.qty)>0)}
+function val(a){return (+a.qty||0)*(+a.price||0)}
+function cost(a){return (+a.qty||0)*(+a.avg||0)}
+function totalValue(){return state.assets.reduce((s,a)=>s+val(a),0)}
+function totalCost(){return state.assets.reduce((s,a)=>s+cost(a),0)}
+function totalPac(){return state.pacs.filter(p=>p.active).reduce((s,p)=>{let a=state.assets.find(a=>a.id===p.assetId);return s+(p.type==='amount'?(+p.amount||0):(+p.units||0)*(a?+a.price||0:0))},0)}
+function showTab(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(id==='rebalance')renderRebalance();if(id==='fire')calcFire()}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function render(){
+ const tv=totalValue(),tc=totalCost(),gain=tv-tc,pct=tc?gain/tc*100:0;
+ $('totalValue').textContent=money(tv);$('totalCost').textContent=money(tc);$('totalGain').textContent=(gain>0?'+':'')+money(gain);$('totalGain').className='metric '+(gain>=0?'positive':'negative');$('totalGainPct').textContent=(pct>0?'+':'')+num(pct)+'%';$('totalGainPct').className='tiny '+(gain>=0?'positive':'negative');
+ $('assetsCount').textContent=heldAssets().length+' strumenti valorizzati';$('monthlyPac').textContent=money(totalPac());$('staleCount').textContent=state.assets.filter(a=>+a.qty>0&&(+a.price===0)).length;$('heldCount').textContent=heldAssets().length;
+ renderAssets();renderPacs();renderAllocation();renderCategory();renderRebalance();$('pacBudgetMetric').textContent=money(+state.settings.pacBudget||0);$('pacBudget').value=state.settings.pacBudget;
+}
+function renderAssets(){
+ const rows=$('assetRows');rows.innerHTML='';$('portfolioEmpty').classList.toggle('hidden',state.assets.length>0);
+ state.assets.forEach(a=>{const tr=document.createElement('tr'),v=val(a),g=v-cost(a);tr.innerHTML=`<td><div class="ticker">${esc(a.ticker)}</div><div class="asset-name">${esc(a.name)}</div></td><td><span class="pill">${esc(a.category)}</span></td><td class="num">${num(+a.qty||0,3)}</td><td class="num">${money(+a.price||0)}</td><td class="num">${money(v)}</td><td class="num ${g>=0?'positive':'negative'}">${g>=0?'+':''}${money(g)}</td><td class="num"><button class="secondary small" data-edit="${a.id}">Modifica</button> <button class="danger small" data-del="${a.id}">×</button></td>`;rows.appendChild(tr)});
+ rows.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editAsset(b.dataset.edit));rows.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteAsset(b.dataset.del));
+}
+function renderAllocation(){
+ const bar=$('allocationBar'),legend=$('allocationLegend'),total=totalValue();bar.innerHTML='';legend.innerHTML='';
+ const sums={};state.assets.forEach(a=>{const v=val(a);if(v>0)sums[a.category]=(sums[a.category]||0)+v});
+ const sorted=Object.entries(sums).sort((a,b)=>b[1]-a[1]);if(!sorted.length){bar.innerHTML='<span style="width:100%;background:#27364d"></span>';legend.innerHTML='<span class="tiny">Inserisci quantità e prezzi per vedere l’allocazione.</span>';return}
+ sorted.forEach(([cat,v])=>{const pct=v/total*100,sp=document.createElement('span');sp.style.width=pct+'%';sp.style.background=COLORS[cat]||COLORS.Altro;bar.appendChild(sp);const it=document.createElement('div');it.className='legend-item';it.innerHTML=`<i class="dot" style="background:${COLORS[cat]||COLORS.Altro}"></i>${esc(cat)} ${num(pct,1)}%`;legend.appendChild(it)});
+}
+function renderCategory(){
+ const el=$('categorySummary'),sum={};state.assets.forEach(a=>sum[a.category]=(sum[a.category]||0)+val(a));const total=totalValue();el.innerHTML='';
+ Object.entries(sum).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).forEach(([cat,v])=>{const d=document.createElement('div');d.style.margin='13px 0';d.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;margin-bottom:6px"><span>${esc(cat)}</span><strong>${money(v)} <span class="tiny">(${total?num(v/total*100,1):'0,0'}%)</span></strong></div><div class="progress"><div style="width:${total?v/total*100:0}%;background:${COLORS[cat]||COLORS.Altro}"></div></div>`;el.appendChild(d)});if(!el.children.length)el.innerHTML='<div class="empty">I valori appariranno dopo aver inserito gli strumenti.</div>';
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openAssetForm(a=null){
+ $('assetFormCard').classList.remove('hidden');$('assetFormTitle').textContent=a?'Modifica strumento':'Aggiungi strumento';$('assetId').value=a?.id||'';
+ $('assetTicker').value=a?.ticker||'';$('assetName').value=a?.name||'';$('assetCategory').value=a?.category||'Azionario globale';$('assetCurrency').value=a?.currency||'EUR';$('assetQty').value=a?.qty??0;$('assetAvg').value=a?.avg??0;$('assetPrice').value=a?.price??0;$('assetTarget').value=a?.target??0;
+ $('assetFormCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function editAsset(id){const a=state.assets.find(x=>x.id===id);if(a)openAssetForm(a)}
+function deleteAsset(id){const a=state.assets.find(x=>x.id===id);if(!a)return;if(!confirm('Eliminare '+a.ticker+'? Le eventuali righe PAC collegate saranno eliminate.'))return;state.assets=state.assets.filter(x=>x.id!==id);state.pacs=state.pacs.filter(p=>p.assetId!==id);save()}
+$('addAssetBtn').onclick=()=>openAssetForm();$('cancelAsset').onclick=()=>$('assetFormCard').classList.add('hidden');
+$('assetForm').onsubmit=e=>{e.preventDefault();const id=$('assetId').value||uid(),a={id,ticker:$('assetTicker').value.trim().toUpperCase(),name:$('assetName').value.trim(),category:$('assetCategory').value,currency:$('assetCurrency').value,qty:+$('assetQty').value,avg:+$('assetAvg').value,price:+$('assetPrice').value,target:+$('assetTarget').value};const ix=state.assets.findIndex(x=>x.id===id);if(ix>=0)state.assets[ix]=a;else state.assets.push(a);$('assetFormCard').classList.add('hidden');save()};
+function quickAdd(){
+ const box=$('quickAdd');box.innerHTML='';QUICK.forEach(q=>{const b=document.createElement('button');b.className='secondary small';b.textContent='+ '+q[0];b.onclick=()=>{if(state.assets.some(a=>a.ticker===q[0])){alert(q[0]+' è già presente.');return}state.assets.push({id:uid(),ticker:q[0],name:q[1],category:q[2],currency:'EUR',qty:0,avg:0,price:0,target:0});save()};box.appendChild(b)})
+}
+function renderPacs(){
+ const rows=$('pacRows');rows.innerHTML='';$('pacEmpty').classList.toggle('hidden',state.pacs.length>0);
+ state.pacs.forEach(p=>{const a=state.assets.find(x=>x.id===p.assetId),amt=p.type==='amount'?(+p.amount||0):(+p.units||0)*(a?+a.price||0:0),tr=document.createElement('tr');tr.innerHTML=`<td><div class="ticker">${esc(a?.ticker||'Strumento rimosso')}</div><div class="asset-name">${esc(a?.name||'')}</div></td><td>${p.type==='amount'?'Importo':'Quote'}</td><td class="num">${p.type==='units'?num(+p.units||0,3):'—'}</td><td class="num">${money(amt)}</td><td>${p.active?'<span class="positive">Attivo</span>':'<span class="muted">In pausa</span>'}</td><td class="num"><button class="secondary small" data-pedit="${p.id}">Modifica</button> <button class="danger small" data-pdel="${p.id}">×</button></td>`;rows.appendChild(tr)});
+ rows.querySelectorAll('[data-pedit]').forEach(b=>b.onclick=()=>openPacForm(state.pacs.find(p=>p.id===b.dataset.pedit)));rows.querySelectorAll('[data-pdel]').forEach(b=>b.onclick=()=>{state.pacs=state.pacs.filter(p=>p.id!==b.dataset.pdel);save()});
+ const active=state.pacs.filter(p=>p.active),sum=totalPac();$('pacTotal').textContent=money(sum);$('pacAnnual').textContent=money(sum*12);$('pacCount').textContent=active.length;
+ $('pacBudgetStatus').textContent=sum>(+state.settings.pacBudget||0)?'Attenzione: il PAC previsto supera il budget di '+money(sum-state.settings.pacBudget)+'.': 'Il PAC previsto è entro il budget impostato.';
+}
+function populatePacAssets(selected=''){const s=$('pacAsset');s.innerHTML='';state.assets.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.ticker+' — '+a.name;s.appendChild(o)});if(selected)s.value=selected}
+function openPacForm(p=null){if(!state.assets.length){alert('Aggiungi prima almeno uno strumento nella scheda Portafoglio.');showTab('portfolio');return}populatePacAssets(p?.assetId);$('pacFormCard').classList.remove('hidden');$('pacFormTitle').textContent=p?'Modifica riga PAC':'Aggiungi riga PAC';$('pacId').value=p?.id||'';$('pacType').value=p?.type||'units';$('pacUnits').value=p?.units??1;$('pacAmount').value=p?.amount??0;$('pacActive').value=String(p?.active??true);$('pacFormCard').scrollIntoView({behavior:'smooth',block:'start'})}
+$('addPacBtn').onclick=()=>openPacForm();$('cancelPac').onclick=()=>$('pacFormCard').classList.add('hidden');
+$('pacForm').onsubmit=e=>{e.preventDefault();const id=$('pacId').value||uid(),p={id,assetId:$('pacAsset').value,type:$('pacType').value,units:+$('pacUnits').value,amount:+$('pacAmount').value,active:$('pacActive').value==='true'};const ix=state.pacs.findIndex(x=>x.id===id);if(ix>=0)state.pacs[ix]=p;else state.pacs.push(p);$('pacFormCard').classList.add('hidden');save()};
+$('savePacBudget').onclick=()=>{state.settings.pacBudget=Math.max(0,+$('pacBudget').value||0);save()};
+function renderRebalance(){
+ const rows=$('rebalanceRows');rows.innerHTML='';const total=totalValue(),assets=state.assets.filter(a=>a.target>0),targetSum=assets.reduce((s,a)=>s+(+a.target||0),0);
+ $('targetWarning').textContent=targetSum===0?'Imposta un peso obiettivo maggiore di zero sugli strumenti da includere.':`Somma dei target inseriti: ${num(targetSum,1)}%. ${Math.abs(targetSum-100)>0.1?'I target non sommano al 100%: i pesi target saranno normalizzati per il confronto.':'I target sommano al 100%.'}`;
+ assets.forEach(a=>{const v=val(a),actual=total?v/total*100:0,target=targetSum?a.target/targetSum*100:0,diff=target-actual,delta=total*target/100-v,tr=document.createElement('tr');tr.innerHTML=`<td><div class="ticker">${esc(a.ticker)}</div><div class="asset-name">${esc(a.name)}</div></td><td class="num">${num(actual,1)}%</td><td class="num">${num(target,1)}%</td><td class="num ${diff>0.1?'positive':diff<-.1?'negative':''}">${diff>0?'+':''}${num(diff,1)} pp</td><td class="num">${delta>0?'+':''}${money(delta)}</td><td>${diff>1?'Sotto target: valutare acquisti':diff< -1?'Sopra target: non prioritario':'In linea'}</td>`;rows.appendChild(tr)});
+ if(!assets.length)rows.innerHTML='<tr><td colspan="6" class="empty">Inserisci i target nella scheda Portafoglio.</td></tr>';
+}
+function calcRebalance(){
+ const budget=Math.max(0,+$('rebalanceBudget').value||0),total=totalValue(),assets=state.assets.filter(a=>a.target>0),ts=assets.reduce((s,a)=>s+a.target,0),box=$('rebalancePlan');box.innerHTML='';
+ if(!assets.length||!ts){box.innerHTML='<div class="empty">Imposta i target degli strumenti per calcolare un piano.</div>';return}
+ const deficits=assets.map(a=>({a,need:Math.max(0,(total+budget)*(a.target/ts)-val(a))})),sum=deficits.reduce((s,x)=>s+x.need,0);
+ if(!sum){box.innerHTML='<div class="notice">Nessuno strumento è sotto target secondo il calcolo corrente.</div>';return}
+ deficits.filter(x=>x.need>0).sort((a,b)=>b.need-a.need).forEach(x=>{const alloc=budget*x.need/sum,d=document.createElement('div');d.className='result-row';d.innerHTML=`<span>${esc(x.a.ticker)} <span class="tiny">(${num(x.a.target/ts*100,1)}% target)</span></span><strong>${money(alloc)}</strong>`;box.appendChild(d)});
+ const note=document.createElement('div');note.className='tiny';note.style.marginTop='10px';note.textContent='Ripartizione proporzionale ai deficit stimati. Non considera prezzi interi delle quote, commissioni, tasse o vincoli del broker.';box.appendChild(note)
+}
+$('recalcRebalance').onclick=calcRebalance;
+function calcFire(){
+ const f={age:+$('fireAge').value,targetAge:+$('fireTargetAge').value,capital:+$('fireCapital').value,monthly:+$('fireMonthly').value,ret:+$('fireReturn').value/100,infl:+$('fireInflation').value/100,spend:+$('fireSpend').value,withdraw:+$('fireWithdrawal').value/100};
+ state.fire={age:f.age,targetAge:f.targetAge,capital:f.capital,monthly:f.monthly,ret:f.ret*100,infl:f.infl*100,spend:f.spend,withdraw:f.withdraw*100};
+ const years=Math.max(0,Math.min(80,Math.floor(f.targetAge-f.age))),mRet=Math.pow(1+f.ret,1/12)-1;let capital=Math.max(0,f.capital),rows=[];
+ rows.push({age:f.age,nominal:capital,real:capital});
+ for(let m=1;m<=years*12;m++){capital=capital*(1+mRet)+f.monthly; if(m%12===0){const y=m/12;rows.push({age:f.age+y,nominal:capital,real:capital/Math.pow(1+f.infl,y)})}}
+ const future=capital,real=future/Math.pow(1+f.infl,years),needed=f.withdraw>0?(f.spend*12/Math.pow(1+f.infl,0))/f.withdraw:Infinity,neededNominal=needed*Math.pow(1+f.infl,years),income=future*f.withdraw/12,coverage=neededNominal>0?future/neededNominal*100:0;
+ $('fireFuture').textContent=money(future);$('fireToday').textContent='In euro di oggi: '+money(real);$('fireNeeded').textContent=money(neededNominal);$('fireCoverage').textContent=num(coverage,1)+'%';$('fireProgress').style.width=Math.max(0,Math.min(100,coverage))+'%';$('fireIncome').textContent=money(income)+'/mese';
+ const body=$('fireRows');body.innerHTML='';rows.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r.age}</td><td class="num">${money(r.nominal)}</td><td class="num">${money(r.real)}</td>`;body.appendChild(tr)});
+}
+$('calcFire').onclick=calcFire;
+$('saveSettings').onclick=()=>{state.settings.targetTotal=+$('targetTotal').value||100;save();alert('Impostazioni salvate.')};
+$('exportBtn').onclick=()=>download('investimenti-backup.json',JSON.stringify(state,null,2),'application/json');
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const x=JSON.parse(await file.text());if(!x||!Array.isArray(x.assets)||!Array.isArray(x.pacs))throw new Error('Formato non valido');if(confirm('Importare il backup? I dati correnti saranno sostituiti.')){state={...defaultState,...x,settings:{...defaultState.settings,...x.settings},fire:{...defaultState.fire,...x.fire}};save();alert('Backup importato.')}}catch(err){alert('Impossibile importare il file: '+err.message)}e.target.value=''};
+function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('downloadCsv').onclick=()=>{const lines=[['Ticker','Nome','Categoria','Quantita','Prezzo medio','Prezzo attuale','Valore','Costo','P/L','Target %'].join(';')];state.assets.forEach(a=>lines.push([a.ticker,a.name,a.category,a.qty,a.avg,a.price,val(a),cost(a),val(a)-cost(a),a.target].map(x=>String(x??'').replaceAll(';',',')).join(';')));download('portafoglio.csv','\ufeff'+lines.join('\n'),'text/csv;charset=utf-8')};
+$('resetApp').onclick=()=>{if(confirm('Vuoi cancellare definitivamente i dati salvati in questo browser? Prima esporta un backup se vuoi conservarli.')){localStorage.removeItem('investimentiPWA');state=structuredClone(defaultState);save();}};
+QUICK.forEach(()=>{});quickAdd();
+$('targetTotal').value=state.settings.targetTotal||100;
+function hydrateFire(){const f=state.fire;$('fireAge').value=f.age;$('fireTargetAge').value=f.targetAge;$('fireCapital').value=f.capital;$('fireMonthly').value=f.monthly;$('fireReturn').value=f.ret;$('fireInflation').value=f.infl;$('fireSpend').value=f.spend;$('fireWithdrawal').value=f.withdraw}
+hydrateFire();render();calcFire();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script>
+</body></html>
