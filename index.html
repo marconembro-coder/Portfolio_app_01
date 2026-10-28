@@ -20,6 +20,7 @@ header{max-width:1100px;margin:auto;padding:24px 18px 12px;display:flex;justify-
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.two{display:grid;grid-template-columns:1.15fr .85fr;gap:12px;margin-top:14px}.card{background:linear-gradient(145deg,rgba(23,35,56,.98),rgba(17,27,44,.98));border:1px solid var(--line);border-radius:var(--radius);padding:17px;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.12)}.metric-label{font-size:12px;color:var(--muted)}.metric{font-size:24px;font-weight:750;letter-spacing:-.6px;margin:7px 0 4px;overflow-wrap:anywhere}.positive{color:var(--green)}.negative{color:var(--red)}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}.section{display:none}.section.active{display:block}.bar{height:9px;border-radius:10px;background:#27364d;overflow:hidden;display:flex}.bar span{display:block;height:100%}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:3px;display:inline-block}
 table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px}th,td{padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:middle}td.num,th.num{text-align:right;white-space:nowrap}.table-wrap{overflow-x:auto}td:first-child{min-width:125px}.ticker{font-weight:750}.asset-name{font-size:11px;color:var(--muted);margin-top:3px}.pill{font-size:11px;border:1px solid var(--line);border-radius:20px;padding:4px 7px;color:var(--muted);white-space:nowrap}
 form .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}input,select{width:100%;background:#0c1525;border:1px solid #35455e;border-radius:10px;padding:11px;color:var(--text);min-width:0}input:focus,select:focus{outline:2px solid #4f80bb;border-color:transparent}.field.full{grid-column:1/-1}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.form-card{margin-top:12px}.notice{background:#202b3e;border:1px solid #35445c;padding:12px 13px;border-radius:12px;font-size:12px;line-height:1.5;color:#c2cede}.empty{padding:28px;text-align:center;color:var(--muted)}.progress{height:10px;background:#26354b;border-radius:20px;overflow:hidden}.progress>div{height:100%;background:var(--green);border-radius:20px}.result-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.result-row:last-child{border-bottom:0}.hidden{display:none!important}
+.chart-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.chart-value{font-size:29px;font-weight:800;letter-spacing:-.8px;margin:7px 0 2px}.chart-change{font-size:13px;font-weight:700}.range-switch{display:flex;gap:5px;background:#0c1525;padding:4px;border-radius:12px;border:1px solid var(--line)}.range-btn{background:transparent;color:var(--muted);padding:8px 10px;font-size:12px;border-radius:8px}.range-btn.active{background:#2b4262;color:#fff}.chart-wrap{position:relative;height:230px;margin-top:14px;overflow:hidden}.chart-wrap svg{width:100%;height:100%;display:block;overflow:visible}.chart-grid{stroke:#29364c;stroke-width:1;stroke-dasharray:3 5}.chart-label{fill:#8293ac;font-size:10px}.chart-tooltip{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;margin-top:8px}.chart-note{font-size:11px;color:var(--muted);line-height:1.45;margin-top:8px}.chart-loading{display:flex;align-items:center;justify-content:center;height:210px;color:var(--muted);font-size:13px}
 footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
 @media(max-width:760px){header{align-items:flex-start;flex-direction:column;padding-top:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.metric{font-size:21px}.two{grid-template-columns:1fr}.wrap{padding-left:12px;padding-right:12px}.card{padding:14px}.top-actions{width:100%}.top-actions button{flex:1}th,td{padding:10px 7px}.desktop-only{display:none}}
 @media(min-width:761px){.mobile-only{display:none}}
@@ -27,8 +28,8 @@ footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
 </head>
 <body>
 <header>
-  <div><h1>Investimenti</h1><div class="sub">Dashboard personale · dati aggiornati manualmente</div></div>
-  <div class="top-actions"><button class="secondary" id="exportBtn">Esporta backup</button><button class="secondary" id="importBtn">Importa backup</button><input id="importFile" type="file" accept="application/json" class="hidden"></div>
+  <div><h1>Investimenti</h1><div class="sub">Dashboard personale · quotazioni automatiche disponibili</div><div class="tiny" id="quoteStatus" style="margin-top:6px">Quotazioni non ancora aggiornate</div></div>
+  <div class="top-actions"><button id="refreshQuotesBtn">Aggiorna quotazioni</button><button class="secondary" id="exportBtn">Esporta backup</button><button class="secondary" id="importBtn">Importa backup</button><input id="importFile" type="file" accept="application/json" class="hidden"></div>
 </header>
 <main class="wrap">
 <nav class="tabs" aria-label="Sezioni">
@@ -41,12 +42,16 @@ footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
     <div class="card"><div class="metric-label">Plus/minus latente</div><div class="metric" id="totalGain">€ 0</div><div class="tiny" id="totalGainPct">0,00%</div></div>
     <div class="card"><div class="metric-label">PAC mensile previsto</div><div class="metric" id="monthlyPac">€ 0</div><div class="tiny">Somma dei piani attivi</div></div>
   </div>
+  <div class="card" style="margin-top:14px" id="performanceCard">
+    <div class="chart-head"><div><div class="metric-label">ANDAMENTO DEL PORTAFOGLIO</div><div class="chart-value" id="chartCurrentValue">—</div><div class="chart-change" id="chartPeriodChange">Caricamento storico…</div></div><div class="range-switch" aria-label="Periodo grafico"><button class="range-btn active" data-range="6mo">6M</button><button class="range-btn" data-range="1mo">1M</button><button class="range-btn" data-range="1wk">1S</button><button class="range-btn" data-range="1d">1G</button></div></div>
+    <div id="portfolioChart" class="chart-wrap"><div class="chart-loading">Recupero andamento storico…</div></div><div class="chart-tooltip"><span id="chartStartLabel">—</span><strong id="chartHoverLabel">Seleziona un periodo</strong><span id="chartEndLabel">—</span></div><div class="chart-note" id="chartNote">Storico indicativo basato sulle quantità attuali e sui prezzi storici disponibili; non ricostruisce acquisti e vendite passati.</div>
+  </div>
   <div class="two">
     <div class="card"><h2>Allocazione attuale</h2><div class="bar" id="allocationBar"></div><div class="legend" id="allocationLegend"></div><div class="tiny" style="margin-top:14px">L'allocazione considera il valore di mercato degli strumenti con quantità e prezzo validi.</div></div>
     <div class="card"><h2>Da fare</h2><div class="result-row"><span class="muted">Prezzi da aggiornare</span><strong id="staleCount">—</strong></div><div class="result-row"><span class="muted">Strumenti in portafoglio</span><strong id="heldCount">—</strong></div><div class="result-row"><span class="muted">Prossimo passo</span><span class="tiny">Aggiorna i prezzi nella scheda Portafoglio</span></div><button class="secondary" style="width:100%;margin-top:12px" onclick="showTab('portfolio')">Apri portafoglio</button></div>
   </div>
   <div class="card" style="margin-top:14px"><h2>Valore per categoria</h2><div id="categorySummary"></div></div>
-  <div class="notice" style="margin-top:14px">I valori sono calcolati solo dai dati inseriti da te. L'app non è collegata a Fineco e non scarica automaticamente quotazioni di mercato. Fai regolarmente un backup con “Esporta backup”.</div>
+  <div class="notice" style="margin-top:14px">Le quotazioni vengono recuperate da Yahoo Finance tramite un servizio proxy esterno; i prezzi possono essere ritardati o non disponibili. Sono inviati solo i simboli di mercato, non quantità o valori del tuo portafoglio. L'app non è collegata a Fineco. Fai regolarmente un backup con “Esporta backup”.</div>
 </section>
 <section id="portfolio" class="section">
   <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin-bottom:4px">I tuoi strumenti</h2><div class="tiny">Modifica quantità, prezzo medio, prezzo attuale e peso obiettivo.</div></div><button id="addAssetBtn">+ Aggiungi strumento</button></div>
@@ -56,7 +61,8 @@ footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
   <div><label for="assetTicker">Ticker / ISIN breve</label><input id="assetTicker" required placeholder="es. SWDA"></div>
   <div><label for="assetName">Nome</label><input id="assetName" required placeholder="es. MSCI World"></div>
   <div><label for="assetCategory">Categoria</label><select id="assetCategory"><option>Azionario globale</option><option>Azionario emergenti</option><option>Azionario small cap</option><option>Obbligazionario breve</option><option>Obbligazionario governativo</option><option>Obbligazionario lunga durata</option><option>Oro</option><option>Bitcoin</option><option>Liquidità</option><option>Altro</option></select></div>
-  <div><label for="assetCurrency">Valuta</label><select id="assetCurrency"><option value="EUR">EUR</option><option value="USD">USD</option></select></div>
+  <div><label for="assetCurrency">Valuta del prezzo</label><select id="assetCurrency"><option value="EUR">EUR</option><option value="USD">USD</option></select></div>
+  <div><label for="assetQuoteSymbol">Simbolo quotazione Yahoo Finance</label><input id="assetQuoteSymbol" placeholder="es. SWDA.MI (vuoto = manuale)"></div>
   <div><label for="assetQty">Quantità posseduta</label><input id="assetQty" type="number" min="0" step="0.000001" value="0" required></div>
   <div><label for="assetAvg">Prezzo medio di carico (€)</label><input id="assetAvg" type="number" min="0" step="0.0001" value="0" required></div>
   <div><label for="assetPrice">Prezzo attuale (€)</label><input id="assetPrice" type="number" min="0" step="0.0001" value="0" required></div>
@@ -101,11 +107,11 @@ footer{text-align:center;color:#66758c;font-size:11px;padding:22px 0 4px}
   <div class="notice" style="margin-top:14px">La simulazione non considera fiscalità, commissioni, costi dei fondi, volatilità, sequence-of-returns risk, pensione pubblica o variazioni future dei versamenti. Il tasso di prelievo è un'ipotesi, non una garanzia di sostenibilità.</div>
 </section>
 <section id="settings" class="section">
-  <div class="card"><h2>Impostazioni e dati</h2><p class="tiny">I dati sono conservati nel browser di questo dispositivo. Non vengono inviati a un server. Cancellare i dati del sito o cambiare browser può eliminarli.</p>
+  <div class="card"><h2>Impostazioni e dati</h2><p class="tiny">Quantità, prezzi medi, target e impostazioni restano nel browser di questo dispositivo. Per aggiornare i prezzi, l’app invia a un proxy esterno soltanto i simboli di quotazione; il servizio può vedere quali ticker interroghi. Cancellare i dati del sito o cambiare browser può eliminare il portafoglio.</p>
   <div class="fields"><div><label for="targetTotal">Target complessivo pesi strumenti (%)</label><input id="targetTotal" type="number" min="1" max="1000" step="1" value="100"></div><div><label for="currencyDisplay">Valuta di visualizzazione</label><select id="currencyDisplay"><option value="EUR">Euro (€)</option></select></div></div>
   <div class="form-actions"><button id="saveSettings">Salva impostazioni</button><button class="secondary" id="downloadCsv">Esporta portafoglio CSV</button><button class="danger" id="resetApp">Azzera tutti i dati</button></div><div class="notice" style="margin-top:14px">Consiglio: esporta periodicamente un backup JSON e conservalo in un luogo sicuro. Non contiene password bancarie, ma può contenere informazioni finanziarie personali.</div></div>
 </section>
-<footer>Investimenti PWA · versione 1.0 · calcoli informativi, non consulenza finanziaria</footer>
+<footer>Investimenti PWA · versione 1.2 · quotazioni indicative, non consulenza finanziaria</footer>
 </main>
 <script>
 const $=id=>document.getElementById(id);
@@ -114,12 +120,14 @@ const num=(n,d=2)=>new Intl.NumberFormat('it-IT',{minimumFractionDigits:d,maximu
 const uid=()=>Math.random().toString(36).slice(2,10);
 const CATS=['Azionario globale','Azionario emergenti','Azionario small cap','Obbligazionario breve','Obbligazionario governativo','Obbligazionario lunga durata','Oro','Bitcoin','Liquidità','Altro'];
 const COLORS={'Azionario globale':'#6da4ff','Azionario emergenti':'#6dd6c0','Azionario small cap':'#9c8aff','Obbligazionario breve':'#e8c66f','Obbligazionario governativo':'#f1a86d','Obbligazionario lunga durata':'#e88d9b','Oro':'#e7c778','Bitcoin':'#b99cff','Liquidità':'#a6b6ca','Altro':'#8998ad'};
+const QUOTE_SYMBOLS={'SWDA':'SWDA.MI','EIMI':'EIMI.MI','AVWS':'AVWS.MI','AGGH':'AGGH.MI','EGOV':'EGOV.MI','EMI15.MI':'EMI15.MI','XGDU':'XGDU.MI','WBIT':'WBIT.MI','SMEA':'SMEA.MI','BTP':''};
 const QUICK=[
  ['SWDA','iShares Core MSCI World','Azionario globale'],['EIMI','iShares Core MSCI EM IMI','Azionario emergenti'],['AVWS','Avantis Global Small Cap Value','Azionario small cap'],
  ['AGGH','Global Aggregate Bond EUR Hedged','Obbligazionario breve'],['EGOV','Government Bond ETF (EGOV)','Obbligazionario governativo'],['EMI15.MI','ETF obbligazionario lunga durata','Obbligazionario lunga durata'],
  ['XGDU','Oro fisico ETC','Oro'],['WBIT','Bitcoin ETP','Bitcoin'],['SMEA','MSCI Europe','Azionario globale'],['BTP','BTP / obbligazione singola','Obbligazionario governativo']
 ];
-const defaultState={assets:[],pacs:[],settings:{pacBudget:500,targetTotal:100},fire:{age:30,targetAge:55,capital:0,monthly:500,ret:5,infl:2,spend:2000,withdraw:3.5}};
+const defaultState={assets:[],pacs:[],settings:{pacBudget:500,targetTotal:100},fire:{age:30,targetAge:55,capital:0,monthly:500,ret:5,infl:2,spend:2000,withdraw:3.5},quotesUpdatedAt:null};
+let chartRange='6mo',chartLoadToken=0,chartDataByRange={};
 let state=loadState();
 function loadState(){try{const x=JSON.parse(localStorage.getItem('investimentiPWA'));if(x&&Array.isArray(x.assets))return {...defaultState,...x,settings:{...defaultState.settings,...x.settings},fire:{...defaultState.fire,...x.fire}}}catch(e){}return structuredClone(defaultState)}
 function save(){localStorage.setItem('investimentiPWA',JSON.stringify(state));render()}
@@ -130,12 +138,12 @@ function cost(a){return (+a.qty||0)*(+a.avg||0)}
 function totalValue(){return state.assets.reduce((s,a)=>s+val(a),0)}
 function totalCost(){return state.assets.reduce((s,a)=>s+cost(a),0)}
 function totalPac(){return state.pacs.filter(p=>p.active).reduce((s,p)=>{let a=state.assets.find(a=>a.id===p.assetId);return s+(p.type==='amount'?(+p.amount||0):(+p.units||0)*(a?+a.price||0:0))},0)}
-function showTab(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(id==='rebalance')renderRebalance();if(id==='fire')calcFire()}
+function showTab(id){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));if(id==='rebalance')renderRebalance();if(id==='fire')calcFire();if(id==='dashboard')loadPortfolioChart(chartRange)}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 function render(){
  const tv=totalValue(),tc=totalCost(),gain=tv-tc,pct=tc?gain/tc*100:0;
  $('totalValue').textContent=money(tv);$('totalCost').textContent=money(tc);$('totalGain').textContent=(gain>0?'+':'')+money(gain);$('totalGain').className='metric '+(gain>=0?'positive':'negative');$('totalGainPct').textContent=(pct>0?'+':'')+num(pct)+'%';$('totalGainPct').className='tiny '+(gain>=0?'positive':'negative');
- $('assetsCount').textContent=heldAssets().length+' strumenti valorizzati';$('monthlyPac').textContent=money(totalPac());$('staleCount').textContent=state.assets.filter(a=>+a.qty>0&&(+a.price===0)).length;$('heldCount').textContent=heldAssets().length;
+ $('assetsCount').textContent=heldAssets().length+' strumenti valorizzati';$('monthlyPac').textContent=money(totalPac());$('staleCount').textContent=state.assets.filter(a=>+a.qty>0&&(+a.price===0)).length;$('heldCount').textContent=heldAssets().length;updateQuoteStatus();
  renderAssets();renderPacs();renderAllocation();renderCategory();renderRebalance();$('pacBudgetMetric').textContent=money(+state.settings.pacBudget||0);$('pacBudget').value=state.settings.pacBudget;
 }
 function renderAssets(){
@@ -156,15 +164,15 @@ function renderCategory(){
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function openAssetForm(a=null){
  $('assetFormCard').classList.remove('hidden');$('assetFormTitle').textContent=a?'Modifica strumento':'Aggiungi strumento';$('assetId').value=a?.id||'';
- $('assetTicker').value=a?.ticker||'';$('assetName').value=a?.name||'';$('assetCategory').value=a?.category||'Azionario globale';$('assetCurrency').value=a?.currency||'EUR';$('assetQty').value=a?.qty??0;$('assetAvg').value=a?.avg??0;$('assetPrice').value=a?.price??0;$('assetTarget').value=a?.target??0;
+ $('assetTicker').value=a?.ticker||'';$('assetName').value=a?.name||'';$('assetCategory').value=a?.category||'Azionario globale';$('assetCurrency').value=a?.currency||'EUR';$('assetQuoteSymbol').value=a?.quoteSymbol??QUOTE_SYMBOLS[(a?.ticker||'').toUpperCase()]??'';$('assetQty').value=a?.qty??0;$('assetAvg').value=a?.avg??0;$('assetPrice').value=a?.price??0;$('assetTarget').value=a?.target??0;
  $('assetFormCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function editAsset(id){const a=state.assets.find(x=>x.id===id);if(a)openAssetForm(a)}
 function deleteAsset(id){const a=state.assets.find(x=>x.id===id);if(!a)return;if(!confirm('Eliminare '+a.ticker+'? Le eventuali righe PAC collegate saranno eliminate.'))return;state.assets=state.assets.filter(x=>x.id!==id);state.pacs=state.pacs.filter(p=>p.assetId!==id);save()}
 $('addAssetBtn').onclick=()=>openAssetForm();$('cancelAsset').onclick=()=>$('assetFormCard').classList.add('hidden');
-$('assetForm').onsubmit=e=>{e.preventDefault();const id=$('assetId').value||uid(),a={id,ticker:$('assetTicker').value.trim().toUpperCase(),name:$('assetName').value.trim(),category:$('assetCategory').value,currency:$('assetCurrency').value,qty:+$('assetQty').value,avg:+$('assetAvg').value,price:+$('assetPrice').value,target:+$('assetTarget').value};const ix=state.assets.findIndex(x=>x.id===id);if(ix>=0)state.assets[ix]=a;else state.assets.push(a);$('assetFormCard').classList.add('hidden');save()};
+$('assetForm').onsubmit=e=>{e.preventDefault();const id=$('assetId').value||uid(),ticker=$('assetTicker').value.trim().toUpperCase(),old=state.assets.find(x=>x.id===id),a={id,ticker,name:$('assetName').value.trim(),category:$('assetCategory').value,currency:$('assetCurrency').value,quoteSymbol:$('assetQuoteSymbol').value.trim().toUpperCase()||(QUOTE_SYMBOLS[ticker]||''),qty:+$('assetQty').value,avg:+$('assetAvg').value,price:+$('assetPrice').value,target:+$('assetTarget').value,priceUpdatedAt:old?.priceUpdatedAt||null};const ix=state.assets.findIndex(x=>x.id===id);if(ix>=0)state.assets[ix]=a;else state.assets.push(a);$('assetFormCard').classList.add('hidden');save()};
 function quickAdd(){
- const box=$('quickAdd');box.innerHTML='';QUICK.forEach(q=>{const b=document.createElement('button');b.className='secondary small';b.textContent='+ '+q[0];b.onclick=()=>{if(state.assets.some(a=>a.ticker===q[0])){alert(q[0]+' è già presente.');return}state.assets.push({id:uid(),ticker:q[0],name:q[1],category:q[2],currency:'EUR',qty:0,avg:0,price:0,target:0});save()};box.appendChild(b)})
+ const box=$('quickAdd');box.innerHTML='';QUICK.forEach(q=>{const b=document.createElement('button');b.className='secondary small';b.textContent='+ '+q[0];b.onclick=()=>{if(state.assets.some(a=>a.ticker===q[0])){alert(q[0]+' è già presente.');return}state.assets.push({id:uid(),ticker:q[0],name:q[1],category:q[2],currency:'EUR',quoteSymbol:QUOTE_SYMBOLS[q[0]]||'',qty:0,avg:0,price:0,target:0});save()};box.appendChild(b)})
 }
 function renderPacs(){
  const rows=$('pacRows');rows.innerHTML='';$('pacEmpty').classList.toggle('hidden',state.pacs.length>0);
@@ -213,8 +221,69 @@ $('downloadCsv').onclick=()=>{const lines=[['Ticker','Nome','Categoria','Quantit
 $('resetApp').onclick=()=>{if(confirm('Vuoi cancellare definitivamente i dati salvati in questo browser? Prima esporta un backup se vuoi conservarli.')){localStorage.removeItem('investimentiPWA');state=structuredClone(defaultState);save();}};
 QUICK.forEach(()=>{});quickAdd();
 $('targetTotal').value=state.settings.targetTotal||100;
+function updateQuoteStatus(){
+ const el=$('quoteStatus');if(!el)return;
+ if(state.quotesUpdatedAt){const d=new Date(state.quotesUpdatedAt);el.textContent='Ultimo aggiornamento: '+d.toLocaleString('it-IT')+' · prezzi indicativi';}
+ else el.textContent='Quotazioni non ancora aggiornate';
+}
+function quoteSymbolFor(a){return (a.quoteSymbol??QUOTE_SYMBOLS[(a.ticker||'').toUpperCase()]??'').trim();}
+async function refreshQuotes(silent=false){
+ const btn=$('refreshQuotesBtn');if(btn?.dataset.busy==='1')return;
+ const candidates=state.assets.filter(a=>quoteSymbolFor(a));
+ if(!candidates.length){if(!silent)alert('Non ci sono strumenti con un simbolo di quotazione. Apri Modifica su un ETF e inserisci il simbolo Yahoo Finance, ad esempio SWDA.MI. BTP singoli restano manuali.');return;}
+ if(btn){btn.dataset.busy='1';btn.disabled=true;btn.textContent='Aggiornamento…';}
+ const status=$('quoteStatus');if(status)status.textContent='Recupero delle quotazioni…';
+ let updated=0,failed=[];
+ for(const a of candidates){
+  const symbol=quoteSymbolFor(a);
+  try{
+   const yahoo='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?range=1d&interval=1d';
+   const response=await fetch('https://proxy.cors.dev/'+yahoo,{cache:'no-store'});
+   if(!response.ok)throw new Error('HTTP '+response.status);
+   const json=await response.json(),result=json?.chart?.result?.[0],meta=result?.meta;
+   const price=Number(meta?.regularMarketPrice),currency=String(meta?.currency||'').toUpperCase();
+   if(!Number.isFinite(price)||price<=0)throw new Error('prezzo non disponibile');
+   if(currency!=='EUR')throw new Error('quotazione in '+(currency||'valuta sconosciuta')+'; conversione automatica non attiva');
+   const live=state.assets.find(x=>x.id===a.id);if(!live)continue;
+   live.price=price;live.currency='EUR';live.priceUpdatedAt=new Date().toISOString();live.quoteError='';updated++;
+  }catch(err){const live=state.assets.find(x=>x.id===a.id);if(live)live.quoteError=String(err?.message||'errore');failed.push(a.ticker+' ('+symbol+')');}
+ }
+ if(updated>0)state.quotesUpdatedAt=new Date().toISOString();
+ localStorage.setItem('investimentiPWA',JSON.stringify(state));render();
+ if(btn){btn.dataset.busy='0';btn.disabled=false;btn.textContent='Aggiorna quotazioni';}
+ if(status){status.textContent=updated+' quotazioni aggiornate'+(state.quotesUpdatedAt?' · '+new Date(state.quotesUpdatedAt).toLocaleString('it-IT'):'')+(failed.length?' · '+failed.length+' non riuscite':'');}
+ if(!silent){let msg='Aggiornamento completato: '+updated+' strumenti aggiornati.';if(failed.length)msg+='\nNon aggiornati: '+failed.join(', ')+'. I prezzi precedenti sono stati mantenuti.';alert(msg);}
+}
+$('refreshQuotesBtn').addEventListener('click',()=>refreshQuotes(false));
+const CHART_RANGES={ '6mo':{label:'6 mesi',range:'6mo',interval:'1d'},'1mo':{label:'1 mese',range:'1mo',interval:'1d'},'1wk':{label:'1 settimana',range:'5d',interval:'30m'},'1d':{label:'1 giorno',range:'1d',interval:'5m'} };
+document.querySelectorAll('[data-range]').forEach(b=>b.addEventListener('click',()=>{chartRange=b.dataset.range;document.querySelectorAll('[data-range]').forEach(x=>x.classList.toggle('active',x===b));loadPortfolioChart(chartRange)}));
+function chartMoney(v){return new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v)}
+function chartDate(t,range){const d=new Date(t);return d.toLocaleString('it-IT',range==='1d'||range==='1wk'?{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}:{day:'2-digit',month:'short'});}
+async function loadPortfolioChart(range='6mo'){
+ const token=++chartLoadToken,box=$('portfolioChart'),config=CHART_RANGES[range];$('chartPeriodChange').textContent='Recupero dati storici…';box.innerHTML='<div class="chart-loading">Recupero andamento storico…</div>';
+ const quoted=state.assets.filter(a=>+a.qty>0&&quoteSymbolFor(a));const manual=state.assets.filter(a=>+a.qty>0&&!quoteSymbolFor(a)).reduce((s,a)=>s+val(a),0);
+ if(!state.assets.some(a=>+a.qty>0)){box.innerHTML='<div class="chart-loading">Aggiungi strumenti e quantità per visualizzare il grafico.</div>';$('chartCurrentValue').textContent=chartMoney(0);$('chartPeriodChange').textContent='Nessun investimento inserito';return}
+ if(!quoted.length){box.innerHTML='<div class="chart-loading">Per ricostruire l’andamento servono simboli Yahoo Finance validi.</div>';$('chartCurrentValue').textContent=chartMoney(totalValue());$('chartPeriodChange').textContent='Storico non disponibile';return}
+ try{
+  const responses=await Promise.all(quoted.map(async a=>{const url='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(quoteSymbolFor(a))+'?range='+config.range+'&interval='+config.interval;const r=await fetch('https://proxy.cors.dev/'+url,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json(),res=j?.chart?.result?.[0];if(!res)throw new Error('Dati assenti');const c=res.indicators?.quote?.[0]?.close||[],ts=res.timestamp||[],pts=ts.map((t,i)=>({t:t*1000,p:Number(c[i])})).filter(x=>Number.isFinite(x.p)&&x.p>0);if(!pts.length)throw new Error('Serie vuota');return {asset:a,pts}}));
+  if(token!==chartLoadToken)return;
+  const times=[...new Set(responses.flatMap(x=>x.pts.map(p=>p.t)))].sort((a,b)=>a-b);if(!times.length)throw new Error('Nessun punto storico');
+  const pointers=responses.map(()=>0),series=[];
+  for(const t of times){let total=manual,used=0;responses.forEach((r,i)=>{while(pointers[i]+1<r.pts.length&&r.pts[pointers[i]+1].t<=t)pointers[i]++;const pt=r.pts[pointers[i]];if(pt&&pt.t<=t){total+=(+r.asset.qty||0)*pt.p;used++}});if(used)series.push({t,v:total})}
+  if(!series.length)throw new Error('Serie non disponibile');chartDataByRange[range]=series;drawPortfolioChart(series,range);
+ }catch(e){if(token!==chartLoadToken)return;box.innerHTML='<div class="chart-loading">Storico non disponibile. Verifica la connessione o riprova più tardi.</div>';$('chartCurrentValue').textContent=chartMoney(totalValue());$('chartPeriodChange').textContent='Impossibile recuperare le quotazioni storiche';$('chartStartLabel').textContent='—';$('chartEndLabel').textContent='—';}
+}
+function drawPortfolioChart(series,range){
+ const box=$('portfolioChart'),vals=series.map(p=>p.v),min=Math.min(...vals),max=Math.max(...vals),span=max-min||Math.max(max*.02,1),pad=span*.13,w=760,h=230,left=12,right=12,top=12,bottom=25,plotW=w-left-right,plotH=h-top-bottom,lo=min-pad,hi=max+pad;
+ const x=i=>left+(series.length===1?plotW/2:i/(series.length-1)*plotW),y=v=>top+(hi-v)/(hi-lo)*plotH;
+ const line=series.map((p,i)=>(i?'L':'M')+x(i).toFixed(2)+' '+y(p.v).toFixed(2)).join(' '),area=line+` L ${x(series.length-1)} ${top+plotH} L ${x(0)} ${top+plotH} Z`;
+ const ticks=[0,.5,1].map(f=>{const yy=top+plotH*f,v=hi-(hi-lo)*f;return `<line class="chart-grid" x1="${left}" y1="${yy}" x2="${w-right}" y2="${yy}"/><text class="chart-label" x="${left+3}" y="${yy-4}">${chartMoney(v)}</text>`}).join('');
+ box.innerHTML=`<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Andamento storico indicativo del portafoglio"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#78b7ff" stop-opacity=".32"/><stop offset="100%" stop-color="#78b7ff" stop-opacity="0"/></linearGradient></defs>${ticks}<path d="${area}" fill="url(#chartFill)"/><path d="${line}" fill="none" stroke="#86b7ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>${series.length?`<circle cx="${x(series.length-1)}" cy="${y(series[series.length-1].v)}" r="4.5" fill="#86b7ff" stroke="#101827" stroke-width="2"/>`:''}</svg>`;
+ const first=series[0],last=series[series.length-1],delta=last.v-first.v,pct=first.v?delta/first.v*100:0;$('chartCurrentValue').textContent=chartMoney(last.v);$('chartPeriodChange').textContent=(delta>=0?'+':'')+chartMoney(delta)+' ('+(pct>=0?'+':'')+pct.toLocaleString('it-IT',{maximumFractionDigits:2,minimumFractionDigits:2})+'%) nel periodo';$('chartPeriodChange').className='chart-change '+(delta>=0?'positive':'negative');$('chartStartLabel').textContent=chartDate(first.t,range);$('chartEndLabel').textContent=chartDate(last.t,range);$('chartHoverLabel').textContent=series.length+' rilevazioni';
+}
 function hydrateFire(){const f=state.fire;$('fireAge').value=f.age;$('fireTargetAge').value=f.targetAge;$('fireCapital').value=f.capital;$('fireMonthly').value=f.monthly;$('fireReturn').value=f.ret;$('fireInflation').value=f.infl;$('fireSpend').value=f.spend;$('fireWithdrawal').value=f.withdraw}
-hydrateFire();render();calcFire();
+hydrateFire();render();calcFire();loadPortfolioChart('6mo');
+if(!state.quotesUpdatedAt||Date.now()-new Date(state.quotesUpdatedAt).getTime()>6*60*60*1000){setTimeout(()=>refreshQuotes(true),1200)}
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script>
 </body></html>

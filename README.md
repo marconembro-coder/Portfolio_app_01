@@ -27,6 +27,13 @@ Una PWA deve essere pubblicata su un indirizzo HTTPS (oppure eseguita su localho
 - Se pubblichi il repository come pubblico, il codice sarà visibile; i dati inseriti nell'app non vengono pubblicati dal codice, perché restano nel browser locale.
 
 ## Note sulla prima versione
-- I prezzi sono inseriti manualmente in euro. Se uno strumento è quotato in USD, converti tu il prezzo in EUR prima di inserirlo.
+- Le quotazioni automatiche interrogano Yahoo Finance tramite il proxy esterno cors.dev. L’app invia soltanto i simboli di mercato, non quantità o controvalori del portafoglio. È una soluzione non ufficiale, senza garanzia di disponibilità; i prezzi possono essere ritardati. Sono aggiornati all’apertura se l’ultimo aggiornamento risale a più di 6 ore, oppure tramite il pulsante “Aggiorna quotazioni”.
+- I simboli preimpostati usano la quotazione italiana `.MI`; verifica quelli che non vengono aggiornati e correggili in Modifica strumento. Gli strumenti senza quotazione EUR e i singoli BTP restano manuali per evitare conversioni errate.
 - Il calcolo FIRE è una simulazione semplificata e non include fiscalità, commissioni, volatilità o pensione pubblica.
 - Non è consulenza finanziaria e non invia ordini al broker.
+
+
+## Versione 1.2 — grafico storico
+La home include un grafico con intervalli 6 mesi, 1 mese, 1 settimana e 1 giorno. Il grafico recupera le serie storiche da Yahoo Finance tramite lo stesso proxy esterno usato per le quotazioni. È una ricostruzione indicativa calcolata sulle quantità attualmente inserite: non tiene conto delle quantità detenute in passato, degli acquisti/vendite storici, dei flussi di cassa o dei dividendi e quindi non equivale a un rendiconto storico del rendimento effettivo. Gli strumenti manuali senza simbolo di quotazione sono rappresentati a valore costante.
+
+Per aggiornare un'installazione già pubblicata, sostituire nel repository GitHub i file `index.html` e `sw.js`, quindi attendere la pubblicazione e riaprire la PWA. Non cancellare i dati del sito.
